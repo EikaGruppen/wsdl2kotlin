@@ -1,0 +1,21 @@
+[package]
+name = "wsdl2kotlin"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+tree-sitter = "0.16.0"
+gtmpl = "0.7"
+gtmpl_value = "0.5"
+gtmpl_derive = "0.4"
+
+log = "0.4.0"
+env_logger = "0.8.4"
+
+pretty_assertions = "0.7.2"
+
+regex = "1.5.4"
+
+
+[build-dependencies]
+cc="*"
