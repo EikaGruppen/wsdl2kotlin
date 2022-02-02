@@ -112,7 +112,7 @@ fn convert_fields(
                 factory_func = format!(
                     "create{}{}",
                     java_class_name,
-                    title(java_field.name.as_str())
+                    title(java_field.xml_name.as_ref().unwrap_or(&java_field.name))
                 );
                 object_factory_class = kotlin_class_name.as_str();
                 object_factory_package = java_class_package;
@@ -490,6 +490,7 @@ mod tests {
                 JavaField {
                     package: "somepackage".to_string(),
                     name: "entry".to_string(),
+                    xml_name: None,
                     r#type: JavaType {
                         package: Some("somepackage".to_string()),
                         class: "TheClass.InnerClass".to_string(),

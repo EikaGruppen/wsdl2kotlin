@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
-tree-sitter = "0.16.0"
+tree-sitter = "0.19.1"
 gtmpl = "0.7"
 gtmpl_value = "0.5"
 gtmpl_derive = "0.4"

@@ -81,8 +81,8 @@ impl<'a> JavaFile {
 
         if xml_see_also_node.is_some() {
             let mut query = self.new_query(
-                // "((element_value_array_initializer (field_access) @subclass))",
-                "((element_value_array_initializer (class_literal (identifier) @subclass )))",
+                "((element_value_array_initializer (field_access) @subclass))",
+                // "((element_value_array_initializer (class_literal (identifier) @subclass )))",
             );
 
             // scoped_identifier
@@ -315,6 +315,7 @@ impl<'a> JavaFile {
 
             Field {
                 name: variable_name,
+                xml_name: self.xml_name(*node),
                 package: class_package.to_owned(),
                 r#type: Type {
                     package,
@@ -352,6 +353,31 @@ impl<'a> JavaFile {
                 !required
             }
             None => return true,
+        }
+    }
+
+    fn xml_name(&'a self, field_node: Node) -> Option<String> {
+        let mut query = self.new_query(
+            "((field_declaration (modifiers (annotation name: * @ann arguments: * @arg))))",
+        );
+        let matches = query.matches_node(field_node);
+
+        let xml_element_arguments: Option<Node> = matches
+            .filter(|mat| mat.first_capture(self) == "XmlElement" || mat.first_capture(self) == "XmlElementRef")
+            .map(|mat| mat.captures[1].node)
+            .next();
+
+        match xml_element_arguments {
+            Some(xml_element_arguments) => {
+                let mut arg_query =
+                    self.new_query("((element_value_pair key: * @key value: * @value))");
+                let mut arg_matches = arg_query.matches_node(xml_element_arguments);
+
+                arg_matches
+                    .find(|mat| mat.first_capture(self) == "name")
+                    .map(|mat| mat.second_capture(self).replace("\"", ""))
+            }
+            None => return None,
         }
     }
 }
@@ -511,6 +537,7 @@ pub struct Type {
 #[derive(PartialEq, Debug, Clone, Default)]
 pub struct Field {
     pub name: String,
+    pub xml_name: Option<String>,
     pub package: String,
     pub r#type: Type,
     pub generic_type: Option<String>,
@@ -586,6 +613,7 @@ mod tests {
             fields: vec![
                 Field {
                     name: "integer".to_string(),
+                    xml_name: Some("Integer".to_string()),
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -598,6 +626,7 @@ mod tests {
                 },
                 Field {
                     name: "cars".to_string(),
+                    xml_name: Some("Cars".to_string()),
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: Some("misc.a".to_string()),
@@ -610,6 +639,7 @@ mod tests {
                 },
                 Field {
                     name: "bool".to_string(),
+                    xml_name: Some("Bool".to_string()),
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -622,6 +652,7 @@ mod tests {
                 },
                 Field {
                     name: "nillableShort".to_string(),
+                    xml_name: Some("NillableShort".to_string()),
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -634,6 +665,7 @@ mod tests {
                 },
                 Field {
                     name: "car".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: Some("misc.a".to_string()),
@@ -645,7 +677,21 @@ mod tests {
                     nullable: true,
                 },
                 Field {
+                    name: "xmlElementString".to_string(),
+                    xml_name: Some("XmlElementString".to_string()),
+                    package: "misc.a".to_string(),
+                    r#type: Type {
+                        package: None,
+                        class: "String".to_string(),
+                        stdlib: true,
+                    },
+                    generic_type: Some("JAXBElement".to_string()),
+                    builtin: true,
+                    nullable: true,
+                },
+                Field {
                     name: "primInt".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -658,6 +704,7 @@ mod tests {
                 },
                 Field {
                     name: "primBool".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -670,6 +717,7 @@ mod tests {
                 },
                 Field {
                     name: "primLong".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -682,6 +730,7 @@ mod tests {
                 },
                 Field {
                     name: "primByteArray".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -694,6 +743,7 @@ mod tests {
                 },
                 Field {
                     name: "primShort".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -706,6 +756,7 @@ mod tests {
                 },
                 Field {
                     name: "primDouble".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -718,6 +769,7 @@ mod tests {
                 },
                 Field {
                     name: "primFloat".to_string(),
+                    xml_name: None,
                     package: "misc.a".to_string(),
                     r#type: Type {
                         package: None,
@@ -750,6 +802,7 @@ mod tests {
             }],
             fields: vec![Field {
                 name: "doors".to_string(),
+                xml_name: None,
                 package: "misc.a".to_string(),
                 r#type: Type {
                     package: None,
@@ -821,6 +874,7 @@ mod tests {
             name: "BaseResponseType".to_string(),
             fields: vec![Field {
                 name: "responseState".to_string(),
+                xml_name: Some("ResponseState".to_string()),
                 package: "misc.a".to_string(),
                 r#type: Type {
                     package: Some("misc.b".to_string()),
@@ -888,6 +942,7 @@ mod tests {
             fields: vec![
                 Field {
                     name: "a".to_string(),
+                    xml_name: None,
                     package: "inheritance.abstractclasses".to_string(),
                     r#type: Type {
                         package: None,
@@ -900,6 +955,7 @@ mod tests {
                 },
                 Field {
                     name: "inner".to_string(),
+                    xml_name: None,
                     package: "inheritance.abstractclasses".to_string(),
                     r#type: Type {
                         package: Some("inheritance.abstractclasses".to_string()),
@@ -917,6 +973,7 @@ mod tests {
                 fields: vec![
                     Field {
                         name: "ia".to_string(),
+                        xml_name: None,
                         package: "inheritance.abstractclasses"
                             .to_string(),
                         r#type: Type {
