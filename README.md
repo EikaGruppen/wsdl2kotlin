@@ -31,6 +31,14 @@ TODO: add gradle/maven plugin
 
 ## Develop
 
+Build language parser
+```bash
+# clone https://github.com/tree-sitter/tree-sitter-java to the root of this repo
+cd tree-sitter-java
+npm install
+npm run build-test
+```
+
 Build
 ```bash
 cargo build

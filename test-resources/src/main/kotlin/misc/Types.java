@@ -13,6 +13,9 @@ public class Types {
 	@XmlElement(nillable = true)
     protected Car car;
 
+	@XmlElementRef(name = "XmlElementString")
+    protected JAXBElement<String> xmlElementString;
+
     protected int primInt;
     protected boolean primBool;
 	protected long primLong;
