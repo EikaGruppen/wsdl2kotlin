@@ -57,24 +57,17 @@ This setup requires some installs, but does not require running in a docker-cont
 1. rustup
 ```bash
 brew uninstall rust # conflicts with rustup
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+brew install rustup-init
+rustup-init
 ```
 
 2. Install linux target
 ```bash
 rustup target add x86_64-unknown-linux-musl
+rustup target add x86_64-apple-darwin
 ```
 
-3. Install MUSL based CCC
+3. Install MUSL based GCC
 ```bash
-brew install filosottile/musl-cross/musl-cross
-ln -s /usr/local/opt/musl-cross/bin/x86_64-linux-musl-gcc /usr/local/bin/musl-gcc
+brew install messense/macos-cross-toolchains/x86_64-unknown-linux-musl
 ```
-
-4. LLVM
-
-Download this, unpack, put somewhere logical, and update the path in `.cargo/config.toml`.
-
-https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.0/clang+llvm-12.0.0-x86_64-apple-darwin.tar.xz
-
-
