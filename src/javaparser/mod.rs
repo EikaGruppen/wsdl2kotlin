@@ -301,7 +301,7 @@ impl<'a> JavaFile {
                 generic_type = None;
             }
 
-            let primitive = inner_type.chars().next().unwrap().is_lowercase();
+            let primitive = inner_type.chars().next().unwrap().is_lowercase() && !inner_type.ends_with("[]");
 
             let is_builtin = [
                 "Long", "long", "Double", "double", "Float", "float", "String", "Integer", "int",
@@ -739,7 +739,7 @@ mod tests {
                     },
                     generic_type: None,
                     builtin: true,
-                    nullable: false,
+                    nullable: true,
                 },
                 Field {
                     name: "primShort".to_string(),
