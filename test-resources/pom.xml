@@ -6,117 +6,96 @@
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <properties>
+        <kotlin.version>1.8.21</kotlin.version>
+    </properties>
+
     <dependencies>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
 
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
         </dependency>
-
-        <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
+            <version>5.9.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
+            <version>5.9.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
+            <version>3.24.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
-                            <sourceDirs>
-                                <source>src/main/kotlin</source>
-                            </sourceDirs>
-                        </configuration>
+                        <phase>compile</phase>
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <phase>process-test-sources</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <source>src/test/kotlin</source>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>compile_jdk8</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmTarget>${kotlin.compiler.jvmTarget.jdk8}</jvmTarget>
-                            <sourceDirs>
-                                <source>src/main/kotlin</source>
-                            </sourceDirs>
-                            <output>${project.build.outputDirectory_jdk8}</output>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile_jdk8</id>
-                        <phase>process-test-sources</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmTarget>${kotlin.compiler.jvmTarget.jdk8}</jvmTarget>
-                            <sourceDirs>
-                                <source>src/test/kotlin</source>
-                            </sourceDirs>
-                            <testOutput>${project.build.testOutputDirectory}_jdk8</testOutput>
-                        </configuration>
+                        <phase>test-compile</phase>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
                 <executions>
                     <execution>
-                        <id>jar_jdk8</id>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <classesDirectory>${project.build.outputDirectory_jdk8}</classesDirectory>
-                            <classifier>jdk8</classifier>
-                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>java-test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

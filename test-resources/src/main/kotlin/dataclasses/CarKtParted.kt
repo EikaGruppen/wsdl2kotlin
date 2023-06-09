@@ -1,6 +1,18 @@
 package dataclasses
 
 
+private sealed interface CarKtPartedPart0 {
+    val requiredInteger: Int
+    val listOfInternalClasses: List<DoorKt>
+}
+private sealed interface CarKtPartedPart1 {
+    val nullableListOfInternalClasses: List<DoorKt>
+    val stringJAXBElement: String?
+}
+private sealed interface CarKtPartedPart2 {
+    val internalClassJAXBElement: DoorKt?
+}
+
 /**
  * This file is GENERATED. Please don't change
  */
@@ -9,7 +21,7 @@ data class CarKtParted private constructor(
     private val part0: Part0,
     private val part1: Part1,
     private val part2: Part2,
-) {
+): CarKtPartedPart0 by part0, CarKtPartedPart1 by part1, CarKtPartedPart2 by part2 {
 
     constructor(
         requiredInteger: Int,
@@ -37,6 +49,20 @@ data class CarKtParted private constructor(
         part2.toJava(this)
     }
 
+    fun copy(
+        requiredInteger: Int = this.requiredInteger,
+        listOfInternalClasses: List<DoorKt> = this.listOfInternalClasses,
+        nullableListOfInternalClasses: List<DoorKt> = this.nullableListOfInternalClasses,
+        stringJAXBElement: String? = this.stringJAXBElement,
+        internalClassJAXBElement: DoorKt? = this.internalClassJAXBElement,
+    ) = CarKtParted(
+        requiredInteger,
+        listOfInternalClasses,
+        nullableListOfInternalClasses,
+        stringJAXBElement,
+        internalClassJAXBElement,
+    )
+
     companion object {
         internal val factory = ObjectFactory()
 
@@ -48,9 +74,9 @@ data class CarKtParted private constructor(
     }
 
     private data class Part0(
-        val requiredInteger: Int,
-        val listOfInternalClasses: List<DoorKt> = emptyList(),
-    ) {
+        override val requiredInteger: Int,
+        override val listOfInternalClasses: List<DoorKt> = emptyList(),
+    ): CarKtPartedPart0 {
 
         fun toJava(javaClass: Car): Car = javaClass.also {
             it.requiredInteger = requiredInteger
@@ -68,9 +94,9 @@ data class CarKtParted private constructor(
     }
 
     private data class Part1(
-        val nullableListOfInternalClasses: List<DoorKt> = emptyList(),
-        val stringJAXBElement: String? = null,
-    ) {
+        override val nullableListOfInternalClasses: List<DoorKt> = emptyList(),
+        override val stringJAXBElement: String? = null,
+    ): CarKtPartedPart1 {
 
         fun toJava(javaClass: Car): Car = javaClass.also {
             it.nullableListOfInternalClasses = nullableListOfInternalClasses.map { elem -> elem.toJava() }
@@ -88,8 +114,8 @@ data class CarKtParted private constructor(
     }
 
     private data class Part2(
-        val internalClassJAXBElement: DoorKt? = null,
-    ) {
+        override val internalClassJAXBElement: DoorKt? = null,
+    ): CarKtPartedPart2 {
 
         fun toJava(javaClass: Car): Car = javaClass.also {
             it.internalClassJAXBElement = internalClassJAXBElement?.let { elem -> CarKt.factory.createInternalClassJAXBElement(elem.toJava()) }

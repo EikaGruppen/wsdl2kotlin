@@ -308,6 +308,15 @@ fn write_large_data_class<W: Write>(interface: KotlinClass, writer: &mut W) {
 import {{.package}}.{{.class}}
 {{- end}}
 
+{{- $kotlin_name := .kotlin_name }}
+{{ range $index, $part := .parts }}
+private sealed interface {{$kotlin_name}}Part{{$index}} {
+    {{- range .fields}}
+    val {{.name}}: {{ .get_type }}
+    {{- end}}
+}
+{{- end}}
+
 /**
  * This file is GENERATED. Please don't change
  */
@@ -316,7 +325,7 @@ data class {{.kotlin_name}} private constructor(
 {{- range $index, $part := .parts}}
     private val part{{$index}}: Part{{$index}},
 {{- end}}
-) {
+): {{ range $index, $part := .parts}}{{ if $index}}, {{end}}{{$kotlin_name}}Part{{$index}} by part{{$index}}{{end}} {
 
     constructor(
         {{- range .parts}}
@@ -340,6 +349,20 @@ data class {{.kotlin_name}} private constructor(
     {{- end}}
     }
 
+    fun copy(
+        {{- range .parts}}
+        {{- range .fields}}
+        {{.name}}: {{ .get_type }} = this.{{.name}},
+        {{- end}}
+        {{- end}}
+    ) = {{.kotlin_name}}(
+        {{- range .parts}}
+        {{- range .fields}}
+        {{.name}},
+        {{- end}}
+        {{- end}}
+    )
+
     companion object {
         internal val factory = ObjectFactory()
 
@@ -356,9 +379,9 @@ data class {{.kotlin_name}} private constructor(
 
     private data class Part{{$index}}(
         {{- range $part.fields}}
-        val {{.name}}: {{ .get_type_with_default }},
+        override val {{.name}}: {{ .get_type_with_default }},
         {{- end}}
-    ) {
+    ): {{$kotlin_name}}Part{{$index}} {
 
         fun toJava(javaClass: {{$java_name}}): {{$java_name}} = javaClass.also {
                 {{- range $part.fields}}
